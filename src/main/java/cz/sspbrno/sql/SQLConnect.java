@@ -1,21 +1,19 @@
 package cz.sspbrno.sql;
 
-import cz.sspbrno.config;
+import cz.sspbrno.Config;
 import cz.sspbrno.html.ParseLoader;
-
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 
 public class SQLConnect {
     private Connection con;
     private Statement st;
 
     private final String url = String.format("jdbc:mysql://localhost/%s?user=%s&password=%s",
-            config.db_user, config.db_user, config.db_passwd);
+            Config.db_user, Config.db_user, Config.db_passwd);
 
     public SQLConnect() throws SQLException {
         this.con = DriverManager.getConnection(url);
@@ -28,7 +26,6 @@ public class SQLConnect {
                     result.get(i)[2], result.get(i)[0], result.get(i)[1]);
             st.executeUpdate(query);
         }
-
     }
 
     public void update() throws SQLException, IOException {
@@ -95,47 +92,13 @@ public class SQLConnect {
         st.executeUpdate(query);
     }
 
+    public void addMember(String member, String id) throws SQLException {
+        String query = String.format("INSERT INTO members (Player, Id) VALUES ('%s', '%s');", member, id);
+        st.executeUpdate(query);
+    }
+
     public String listOfRecords(String player) throws SQLException {
-        ArrayList<String[]> list = new ArrayList<>();
-        ArrayList<String> alCompTemp = new ArrayList<>();
-        ArrayList<String> alComp = new ArrayList<>();
-        ArrayList<String> alDemo = new ArrayList<>();
-        ResultSet rsComp = st.executeQuery("SELECT Player, Position, Percentage FROM completionist;");
-        int colComp = rsComp.getMetaData().getColumnCount();
-        while (rsComp.next()) {
-            for (int i = 0; i < colComp; i++) {
-                alCompTemp.add(rsComp.getString(i+1));
-            }
-        }
-        ResultSet rsDemo = st.executeQuery("SELECT Name, idDemon FROM demon;");
-        int colDemo = rsDemo.getMetaData().getColumnCount();
-        while (rsDemo.next()) {
-            for (int i = 0; i < colDemo; i++) {
-                alDemo.add(rsDemo.getString(i+1));
-            }
-        }
-        for (int i = 1; i <= alCompTemp.size()/3; i++) {
-            for (int j = 1; j <= alCompTemp.get(i*3-3).split("\\+").length; j++) {
-                if (alCompTemp.get(i*3-3).split("\\+")[j-1].equals(player)) {
-                    String[] lol = {alCompTemp.get(i*3-3).split("\\+")[j-1], alCompTemp.get(i*3-2), alCompTemp.get(i*3-1)};
-                    alComp.add(String.join(" ", lol));
-                }
-            }
-        }
-        for (int i = 0; i < alComp.size(); i++) {
-            for (int j = 1; j <= alDemo.size()/2; j++) {
-                String[] indRecord = {alComp.get(i).split(" ")[0], alComp.get(i).split(" ")[1], alComp.get(i).split(" ")[2], alDemo.get(j*2-1)};
-                if (alComp.get(i).split(" ")[1].replace("-", " ").equals(alDemo.get(j*2-2).toLowerCase())) {
-                    indRecord[1] = alDemo.get(j*2-2);
-                    list.add(indRecord);
-                }
-            }
-        }
-        list.sort((o1, o2) -> {
-            if (Integer.parseInt(o1[3]) < Integer.parseInt(o2[3])) return -1;
-            else if (Integer.parseInt(o1[3]) > Integer.parseInt(o2[3])) return 1;
-            return 0;
-        });
+        ArrayList<String[]> list = getRecords(player);
         String[] arr = new String[list.size()];
         for (int i = 0; i < list.size(); i++) {
             arr[i] = String.format("%s %s%%, ", list.get(i)[1], list.get(i)[2]);
@@ -144,16 +107,69 @@ public class SQLConnect {
     }
 
     public String listOfPlayers() throws SQLException {
-        List<String[]> list = new ArrayList<>();
-        HashSet<String> hs = new HashSet<>();
-        ArrayList<String> al = new ArrayList<>();
-        ResultSet rs = st.executeQuery("SELECT Player FROM completionist;");
-        int col = rs.getMetaData().getColumnCount();
-        while (rs.next()) {
-            for (int i = 0; i < col; i++) {
-                al.add(rs.getString(i+1));
+        ArrayList<String[]> list = getPlayers();
+        String[] arr = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            arr[i] = list.get(i)[0];
+        }
+        return String.format("**All list players:**\n%s", String.join(", ", arr));
+    }
+
+    public ArrayList<String[]> getRecords(String player) throws SQLException {
+        ArrayList<String[]> list = new ArrayList<>();
+        ArrayList<String> alCompTemp = ResultSetToArraylist(st.executeQuery("SELECT Player, Position, Percentage, Device FROM completionist;"));
+        ArrayList<String> alComp = new ArrayList<>();
+        ArrayList<String> alDemo = ResultSetToArraylist(st.executeQuery("SELECT Name, idDemon FROM demon;"));
+
+        for (int i = 1; i <= alCompTemp.size()/4; i++) {
+            for (int j = 1; j <= alCompTemp.get(i*4-4).split("\\+").length; j++) {
+                if (alCompTemp.get(i*4-4).split("\\+")[j-1].equals(player)) {
+                    String[] lol = {alCompTemp.get(i*4-4).split("\\+")[j-1], alCompTemp.get(i*4-3), alCompTemp.get(i*4-2), alCompTemp.get(i*4-1)};
+                    alComp.add(String.join(" ", lol));
+                }
             }
         }
+
+        for (String s : alComp) {
+            for (int j = 1; j <= alDemo.size() / 2; j++) {
+                String[] indRecord = {s.split(" ")[0], s.split(" ")[1], s.split(" ")[2], s.split(" ")[3], alDemo.get(j * 2 - 1)};
+                if (s.split(" ")[1].replace("-", " ").equals(alDemo.get(j * 2 - 2).toLowerCase())) {
+                    indRecord[1] = alDemo.get(j*2-2);
+                    list.add(indRecord);
+                }
+            }
+        }
+
+        list.sort((o1, o2) -> {
+            String[] a1 = o1[2].split("[%-]");
+            String[] a2 = o2[2].split("[%-]");
+            if (a1.length == 1 || a2.length == 1) {
+                if (a1.length == 1 && a2.length == 2) {
+                    if (Integer.parseInt(a2[1]) - Integer.parseInt(a2[0]) < Integer.parseInt(a1[0])) return -1;
+                    else return 1;
+                } else if (a2.length == 1 && a1.length == 2) {
+                    if (Integer.parseInt(a2[0]) < Integer.parseInt(a1[1]) - Integer.parseInt(a1[0])) return -1;
+                    else return 1;
+                } else {
+                    if (Integer.parseInt(a2[0]) < Integer.parseInt(a1[0])) return -1;
+                    else return 1;
+                }
+            } else if (Integer.parseInt(a2[1]) - Integer.parseInt(a2[0]) < Integer.parseInt(a1[1]) - Integer.parseInt(a1[0])) return -1;
+            else return 1;
+        });
+        list.sort((o1, o2) -> {
+            if (Integer.parseInt(o1[4]) < Integer.parseInt(o2[4])) return -1;
+            else if (Integer.parseInt(o1[4]) > Integer.parseInt(o2[4])) return 1;
+            return 0;
+        });
+        return list;
+    }
+
+    public ArrayList<String[]> getPlayers() throws SQLException {
+        ArrayList<String[]> list = new ArrayList<>();
+        HashSet<String> hs = new HashSet<>();
+        ArrayList<String> al = ResultSetToArraylist(st.executeQuery("SELECT Player FROM completionist;"));
+
         for (int i = 0; i < al.size(); i++) {
             if (al.get(i).contains("+")) {
                 al.addAll(Arrays.asList(al.get(i).split("\\+")));
@@ -175,22 +191,27 @@ public class SQLConnect {
                 else if (o1[0].charAt(0) == o2[0].charAt(0)) {
                     if (o1[0].charAt(1) < o2[0].charAt(1)) return -1;
                     else if (o1[0].charAt(1) == o2[0].charAt(1)) {
-                        if (o1[0].charAt(2) < o2[0].charAt(2)) return -1;
-                        else if (o1[0].charAt(2) > o2[0].charAt(2)) return 1;
-                        else return 0;
+                        return Character.compare(o1[0].charAt(2), o2[0].charAt(2));
                     }
                 }
             }
             return -1;
         });
-        String[] arr = new String[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            arr[i] = list.get(i)[0];
-        }
-        return String.format("**All list players:**\n%s", String.join(", ", arr));
+        return list;
     }
 
     public void close() throws SQLException {
         con.close();
+    }
+
+    private ArrayList<String> ResultSetToArraylist(ResultSet rs) throws SQLException {
+        ArrayList<String> al = new ArrayList<>();
+        int col = rs.getMetaData().getColumnCount();
+        while (rs.next()) {
+            for (int i = 0; i < col; i++) {
+                al.add(rs.getString(i+1));
+            }
+        }
+        return al;
     }
 }
