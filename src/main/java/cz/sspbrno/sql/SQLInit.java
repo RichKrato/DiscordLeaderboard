@@ -1,6 +1,8 @@
 package cz.sspbrno.sql;
 
 import cz.sspbrno.Config;
+import cz.sspbrno.html.ParseLoader;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,6 +20,7 @@ public class SQLInit {
     private static final String dbUrl = String.format("jdbc:mysql://localhost/%s?user=%s&password=%s", Config.db_user, Config.db_user, Config.db_passwd);
 
     public SQLInit() throws SQLException, IOException {
+
         this.con = DriverManager.getConnection(url);
         this.st = con.createStatement();
         String[] query = {
@@ -30,10 +33,14 @@ public class SQLInit {
         this.dbSt = dbCon.createStatement();
         String[] dbQuery = {
                 "CREATE TABLE demon ( Name varchar(45), Creator varchar(45), idDemon int(11) PRIMARY KEY);",
-                "CREATE TABLE completionist ( idCompletionist int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT, Player varchar(69), Device varchar(45), Position char(20), Percentage varchar(6), Proof char(43) UNIQUE );",
-                "CREATE TABLE members ( idMembers int(11) PRIMARY KEY, Player varchar(69), Id varchar(45) );"};
+                "CREATE TABLE completionist ( idCompletionist int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT, Player varchar(69), Device varchar(45), Position char(20), Percentage varchar(6) );",
+//                "CREATE TABLE members ( idMembers int(11) PRIMARY KEY, Player varchar(69), Id varchar(45) );"
+        };
         for (String s : dbQuery) dbSt.executeUpdate(s);
-        Config.writeINI("listcreated", true);
         dbCon.close();
+        SQLConnect insert = new SQLConnect();
+        insert.insert(new ParseLoader().splitElements());
+        Config.writeIV("listcreated", true);
+        insert.close();
     }
 }

@@ -1,6 +1,7 @@
 package cz.sspbrno;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -12,8 +13,6 @@ public class Config {
     public static String db_passwd;
     public static String discord_token;
     public static String discord_activity;
-    public static String gmd_username;
-    public static String gmd_passwd;
     private static final String path = "config.ini";
 
     static {
@@ -23,8 +22,6 @@ public class Config {
             db_passwd = config.get(1);
             discord_token = config.get(2);
             discord_activity = config.get(3);
-            gmd_username = config.get(4);
-            gmd_passwd = config.get(5);
         } catch (Exception e) { e.printStackTrace(); }
     }
 
@@ -40,7 +37,17 @@ public class Config {
         return config;
     }
 
-    public static void writeINI(String var, boolean value) throws IOException {
+    public static String readIV(String value) throws IOException {
+        String searched = "";
+        List<String> values = readFile(path);
+        for (String s : values) {
+            if (s.startsWith("IV"))
+                if (s.contains(value)) searched = s.split("=")[1];
+        }
+        return searched;
+    }
+
+    public static void writeIV(String var, boolean value) throws IOException {
         ArrayList<String> config = new ArrayList<>(Files.readAllLines(Paths.get(path)));
         int number = value ? 1 : 0;
         for (int i = 0; i < config.size(); i++) {

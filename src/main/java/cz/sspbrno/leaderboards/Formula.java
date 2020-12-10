@@ -5,15 +5,15 @@ public class Formula {
         if (placement == null) return 0;
         if (percent == null) return 0;
         String[] perc = percent.split("-");
-        double number = (listSize / (listSize / 5 + (-listSize / 5 + 1) * Math.pow(Math.E, -0.009 * Integer.parseInt(placement))));
+        double number = listSize / ((float) listSize / 5 + ((float) -listSize / 5 + 1) * Math.pow(Math.E, -0.009 * ((float) Integer.parseInt(placement) / 2)));
         final double dev = Math.log10(resolve(device)) / 10;
         switch (perc.length) {
             case 1:
-                if (Integer.parseInt(percent) == 100) number = number / dev;
-                else  number = number * (Integer.parseInt(perc[0]) * 0.001) / dev;//number *= (((Integer.parseInt(perc[0]) * 0.005)) / dev);
+                if (Integer.parseInt(percent) == 100) number /= dev;
+                else number *= Math.sqrt(Integer.parseInt(percent) * 0.01 * 0.8) / dev;
                 break;
             case 2:
-                number *= ((((Integer.parseInt(perc[1]) - Integer.parseInt(perc[0])) * 0.005)) / dev);
+                number *= Math.sqrt((Integer.parseInt(perc[1]) - Integer.parseInt(perc[0])) * 0.01 * 0.8) / dev;
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + perc.length);

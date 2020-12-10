@@ -1,15 +1,22 @@
 package cz.sspbrno.discord;
 
+import cz.sspbrno.leaderboards.Leaderboard;
+import cz.sspbrno.leaderboards.Ranking;
 import cz.sspbrno.sql.SQLConnect;
 import cz.sspbrno.sql.SQLInit;
+
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class DiscordCommands {
     public static final String prefix = "-/";
-    private static final String[] commandsListAdmins = {"createlist", "updatelist", "add", "rename", "updaterecord", "removerecord", "addproof"};
-    private static final String[] commandsList = {"getproof", "listofrecords", "listofplayers", "commands"};
+    private static final String[] commandsListAdmins = {"createlist", "updatelist", "add", "rename", "updaterecord", "removerecord"};
+    private static final String[] commandsList = {"listofrecords", "listofplayers", "getposition", "estimatepos", "commands"};
     public static final String createlistHelp = "*"+prefix+"createlist*\n" +
             "creates the user, db and tables\n" +
             "usable only once";
@@ -33,48 +40,41 @@ public class DiscordCommands {
     public static final String removerecordHelp = "*"+prefix+"removerecord Trewis carnage-mode*\n" +
             "***Trewis*** - refers to a name of a player\n" +
             "***carnage-mode*** - refers to a level the record is getting deleted, all spaces must be replaced with a dash(-)\n";
-    public static final String addproofHelp = "*"+prefix+"addproof klouad ithacropolis www.youtube.com/watch?v=RvjfmZNgnpI*\n" +
-            "***klouad*** - refers to a name proof's being given to\n" +
-            "***ithacropolis*** - refers to a level the proof is on, all spaces must be replaced with a dash(-)\n" +
-            "***www.youtube.com/watch?v=RvjfmZNgnpI*** - the actual proof";
-    public static final String getproofHelp = "*"+prefix+"getproof Pakki sonic-wave*\n" +
-            "***Pakki*** - refers to the player's name\n" +
-            "***sonic-wave*** - refers to the player's accomplishment, all spaces must be replaced with a dash(-)\n" +
-            "links proof to the completion, if available";
     public static final String listofrecordsHelp = "*"+prefix+"listofrecords suni*\n" +
             "***suni*** - refers to the player's name\n" +
             "records are sorted by their list position\n" +
             "writes a list of records, sorted by the positions on the list";
     public static final String listofplayersHelp = "*"+prefix+"listofplayers*\n" +
             "displays a list of players in the list, sorted by the amount of records";
+    public static final String getpositionHelp = "*"+prefix+"getposition Nidi*\n" +
+            "***Nidi*** - name of the player\n" +
+            "displays a position of player on the leaderboards";
+    public static final String estimateposHelp = "*"+prefix+"estimatepos Lopaha 144hz betrayal-of-fate 100*\n" +
+            "***Lopaha*** - name of the player\n" +
+            "***144hz*** - device of the player\n" +
+            "***betrayal-of-fate*** - name of the level\n" +
+            "***100*** - percentage on the level\n" +
+            "estimates the position on the leaderboards";
     public static void createList() throws IOException, SQLException {
         SQLInit con = new SQLInit();
     }
 
     public static String[] updateList() throws SQLException, IOException {
         SQLConnect con = new SQLConnect();
+        con.update();
+        con.close();
         DiscordOutput output = new DiscordOutput();
         int number = output.prepareAndSend().size();
         ArrayList<String> preList = output.prepareAndSend();
         String[] list = new String[number];
-        con.update();
         for (int i = 0; i < number; i++) list[i] = preList.get(i);
-        con.close();
         return list;
     }
 
-    public static void add(String[] args, int argsLen) throws SQLException {
+    public static void add(String[] args) throws SQLException {
         SQLConnect con = new SQLConnect();
-        switch (argsLen) {
-            case 5:
-                con.insertIntoCompletionist(args[1], args[2], args[3], args[4]);
-                con.close();
-                break;
-            case 6:
-                con.insertIntoCompletionist(args[1], args[2], args[3], args[4], args[5]);
-                con.close();
-                break;
-        }
+        con.insertIntoCompletionist(args[1], args[2], args[3], args[4]);
+        con.close();
     }
 
     public static void rename(String[] args) throws SQLException {
@@ -83,18 +83,10 @@ public class DiscordCommands {
         con.close();
     }
 
-    public static void updateRecord(String[] args, int argsLen) throws SQLException {
+    public static void updateRecord(String[] args) throws SQLException {
         SQLConnect con = new SQLConnect();
-        switch (argsLen) {
-            case 4:
-                con.updateRecord(args[1], args[2], args[3]);
-                con.close();
-                break;
-            case 5:
-                con.updateRecord(args[1], args[2], args[3], args[4]);
-                con.close();
-                break;
-        }
+        con.updateRecord(args[1], args[2], args[3]);
+        con.close();
     }
 
     public static void removeRecord(String[] args) throws SQLException {
@@ -103,23 +95,7 @@ public class DiscordCommands {
         con.close();
     }
 
-    public static void addProof(String[] args) throws SQLException {
-        SQLConnect con = new SQLConnect();
-        con.addProof(args[1], args[2], args[3]);
-        con.close();
-    }
-
-    public static String getProof(String[] args) throws SQLException {
-        SQLConnect con = new SQLConnect();
-        String message;
-        try {
-            message = con.getProof(args[1], args[2]);
-        } catch (IllegalArgumentException iae) { message = "neexistuje :slight_smile: "; }
-        con.close();
-        return message;
-    }
-
-    public static String listOfRecords(String[] args) throws SQLException {
+    public static String listOfRecords(String[] args) throws SQLException, IOException {
         SQLConnect con = new SQLConnect();
         String message = con.listOfRecords(args[1]);
         con.close();
@@ -133,6 +109,26 @@ public class DiscordCommands {
         return message;
     }
 
+    public static String getPosition(String[] args) throws SQLException, IOException {
+        Leaderboard lead = new Leaderboard();
+        ArrayList<ArrayList<String>> list = lead.sortByRank(lead.shrink(Ranking.playerRanking(0)));
+        int pos = 0;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).get(1).equalsIgnoreCase(args[1])) pos = i+1;
+        }
+        if (pos == 0) return "Player doesn't exist on the list";
+        return String.format("Position of the player **%s** on the list is: **%s**", args[1], pos);
+    }
+
+    public static String estimatePos(String[] args) throws IOException, SQLException {
+        String[] toF = {args[1], args[2], args[3], args[4]};
+        File f = new File("estimate.txt");
+        Files.write(f.toPath(), Collections.singleton(String.join(" ", toF)));
+        String[] estimation = getPosition(args).split("\\*\\*");
+        Files.delete(f.toPath());
+        return String.format("New possible position for the player **%s** on the list is: **%s**", estimation[1], estimation[3]);
+    }
+
     public static String commands() {
         return String.format("**List of commands:**\n" +
                         "for admins -> ( *%s* )\n" +
@@ -141,4 +137,3 @@ public class DiscordCommands {
                 String.join(", ", commandsListAdmins), String.join(", ", commandsList));
     }
 }
-

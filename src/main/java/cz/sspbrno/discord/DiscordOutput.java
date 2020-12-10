@@ -6,6 +6,7 @@ import cz.sspbrno.sql.SQLConnect;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DiscordOutput {
@@ -16,7 +17,6 @@ public class DiscordOutput {
     }
 
     public ArrayList<String> prepareAndSend() throws SQLException, IOException {
-        Leaderboard lead = new Leaderboard();
         ArrayList<String[]> db_demon = new ArrayList<>(con.select("demon"));
         ArrayList<String[]> db_completionist = new ArrayList<>(con.select("completionist"));
         String[][] unfilteredList = new String[db_completionist.size()][3];
@@ -62,10 +62,10 @@ public class DiscordOutput {
                 }
             } else listFinal.add(lb.get(i));
         }
-        listFinal.addAll(lead.top20());
+        listFinal.addAll(Leaderboard.topList(0));
         listFinal.addAll(creators());
-        listFinal.addAll(lead.top60hz());
-        listFinal.addAll(lead.topMobile());
+        listFinal.addAll(Leaderboard.topList(1));
+        listFinal.addAll(Leaderboard.topList(2));
         return trimSize(listFinal);
     }
 
@@ -121,15 +121,13 @@ public class DiscordOutput {
         });
     }
 
-    private static final String creatorsPath = "creators.txt";
-
     private ArrayList<String> creators() throws IOException {
         ArrayList<String> list = new ArrayList<>();
-        List<String> creators = Config.readFile(creatorsPath);
+        List<String> creators = Config.readFile("creators.txt");
         list.add("====================\n**Top " + creators.size() + " CZ/SK Creatoru (Podle CP)**\n");
         for (String s : creators) {
             String[] creator = s.split(" ");
-            list.add(String.format("**%s %s %s** %s %s %s", creator[0], creator[1], creator[2], creator[3], creator[4], creator[5]));
+            list.add(String.format("**%s %s** %s %s %s", creator[0], creator[1], creator[2], creator[3], creator[4]));
         }
         return list;
     }

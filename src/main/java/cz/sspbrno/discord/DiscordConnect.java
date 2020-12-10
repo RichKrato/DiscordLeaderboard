@@ -7,10 +7,9 @@ import javax.security.auth.login.LoginException;
 import cz.sspbrno.Config;
 
 public class DiscordConnect {
-    private JDA bot;
 
     public DiscordConnect() throws LoginException {
-        this.bot = new JDABuilder(Config.discord_token)
+        JDA bot = JDABuilder.createDefault(Config.discord_token)
                 .setActivity(Activity.playing(Config.discord_activity))
                 .addEventListeners(new DiscordListener())
                 .build();

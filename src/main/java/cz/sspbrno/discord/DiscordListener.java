@@ -1,5 +1,7 @@
 package cz.sspbrno.discord;
 
+import cz.sspbrno.Config;
+import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -7,8 +9,10 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,165 +28,183 @@ public class DiscordListener extends ListenerAdapter {
         boolean botChannel = event.getChannel().toString().contains("bot");
         long id = event.getAuthor().getIdLong();
 
-        int number = strToInt(args[0]);
-        if (Arrays.toString(Arrays.toString(Objects.requireNonNull(event.getMember()).getRoles().toArray())
-                .replace("(", ":").split(":")).toLowerCase().contains("list admin"))
-            switch (number) {
-                /**
-                 * createlist
-                 */
-                case 1164:
-                    if (!botChannel) {
-                        clearMessage(event.getChannel());
-                        break;
-                    }
-                    if (help) event.getChannel().sendMessage(DiscordCommands.createlistHelp).queue();
-                    else try {
-                        clearMessage(event.getChannel());
-                        DiscordCommands.createList();
-                    } catch (Exception e) { e.printStackTrace(); }
-                    break;
-                /**
-                 * updatelist
-                 */
-                case 1179:
-                    if (!event.getChannel().toString().contains("sin-slavy")) {
-                        clearMessage(event.getChannel());
-                        break;
-                    }
-                    if (help) event.getChannel().sendMessage(DiscordCommands.updatelistHelp).queue();
-                    else try {
-                        clearMessages(event.getChannel());
-                        String[] list = DiscordCommands.updateList();
-                        for (String s : list) event.getChannel().sendMessage(s).queue();
-                    } catch (Exception e) { e.printStackTrace(); }
-                    break;
-                /**
-                 * add
-                 */
-                case 389:
-                    if (!botChannel) {
-                        clearMessage(event.getChannel());
-                        break;
-                    }
-                    if (help) event.getChannel().sendMessage(DiscordCommands.addHelp).queue();
-                    else if (args[1].equals("-csv") || args[1].equals("--through-csv"))
-                        try {
+        try {
+            if (Arrays.toString(Arrays.toString(Objects.requireNonNull(event.getMember()).getRoles().toArray())
+                    .replace("(", ":").split(":")).toLowerCase().contains("ceo of gmd"))
+                switch (args[0]) {
+                    /**
+                     * createlist
+                     */
+                    case DiscordCommands.prefix + "createlist":
+                        if (!botChannel) {
                             clearMessage(event.getChannel());
-                            ArrayList<String> csv = readCSV();
-                            for (String s : csv) event.getChannel().sendMessage(DiscordCommands.prefix + "add " + s).queue();
+                            break;
+                        }
+                        if (help) event.getChannel().sendMessage(DiscordCommands.createlistHelp).queue();
+                        else try {
+                            clearMessage(event.getChannel());
+                            if (Config.readIV("listCreated").equals("1")) {
+                                event.getChannel().sendMessage("list exists, dumbass").queue();
+                                break;
+                            }
+                            DiscordCommands.createList();
                         } catch (Exception e) { e.printStackTrace(); }
-                    else try {
-                        clearMessage(event.getChannel());
-                        DiscordCommands.add(args, args.length);
-                    } catch (Exception e) { e.printStackTrace(); }
-                    break;
-                /**
-                 * rename
-                 */
-                case 724:
-                    if (!botChannel) {
-                        clearMessage(event.getChannel());
                         break;
-                    }
-                    if (help) event.getChannel().sendMessage(DiscordCommands.renameHelp).queue();
-                    else try {
-                        clearMessage(event.getChannel());
-                        DiscordCommands.rename(args);
-                    } catch (Exception e) { e.printStackTrace(); }
-                    break;
-                /**
-                 * updaterecord
-                 */
-                case 1374:
-                    if (!botChannel) {
-                        clearMessage(event.getChannel());
+                    /**
+                     * updatelist
+                     */
+                    case DiscordCommands.prefix + "updatelist":
+                        if (!event.getChannel().toString().contains("sin-slavy")) {
+                            clearMessage(event.getChannel());
+                            break;
+                        }
+                        if (help) event.getChannel().sendMessage(DiscordCommands.updatelistHelp).queue();
+                        else try {
+                            clearMessages(event.getChannel());
+                            String[] list = DiscordCommands.updateList();
+                            for (String s : list) event.getChannel().sendMessage(s).submit();
+                        } catch (Exception e) { e.printStackTrace(); }
                         break;
-                    }
-                    if (help) event.getChannel().sendMessage(DiscordCommands.updaterecordHelp).queue();
-                    else try {
-                        clearMessage(event.getChannel());
-                        DiscordCommands.updateRecord(args, args.length);
-                    } catch (Exception e) { e.printStackTrace(); }
-                    break;
-                /**
-                 * removerecord
-                 */
-                case 1385:
-                    if (!botChannel) {
-                        clearMessage(event.getChannel());
+                    /**
+                     * add
+                     */
+                    case DiscordCommands.prefix + "add":
+                        if (!botChannel) {
+                            clearMessage(event.getChannel());
+                            break;
+                        }
+                        if (help) event.getChannel().sendMessage(DiscordCommands.addHelp).queue();
+                        else if (args[1].equals("-csv") || args[1].equals("--through-csv"))
+                            try {
+                                clearMessage(event.getChannel());
+                                ArrayList<String> csv;
+                                if (new File("form_message.txt").isFile()) csv = readCSV("form_message.txt");
+                                else csv = readCSV();
+                                for (String s : csv) event.getChannel().sendMessage(DiscordCommands.prefix + "add " + s).queue();
+                            } catch (Exception e) { e.printStackTrace(); }
+                        else try {
+                                clearMessage(event.getChannel());
+                                DiscordCommands.add(args);
+                            } catch (Exception e) { e.printStackTrace(); }
                         break;
-                    }
-                    if (help) event.getChannel().sendMessage(DiscordCommands.removerecordHelp).queue();
-                    else try {
-                        clearMessage(event.getChannel());
-                        DiscordCommands.removeRecord(args);
-                    } catch (Exception e) { e.printStackTrace(); }
-                    break;
-                /**
-                 * addproof
-                 */
-                case 939:
-                    if (!botChannel) {
-                        clearMessage(event.getChannel());
+                    /**
+                     * rename
+                     */
+                    case DiscordCommands.prefix + "rename":
+                        if (!botChannel) {
+                            clearMessage(event.getChannel());
+                            break;
+                        }
+                        if (help) event.getChannel().sendMessage(DiscordCommands.renameHelp).queue();
+                        else try {
+                            clearMessage(event.getChannel());
+                            DiscordCommands.rename(args);
+                        } catch (Exception e) { e.printStackTrace(); }
                         break;
-                    }
-                    if (help) event.getChannel().sendMessage(DiscordCommands.addproofHelp).queue();
-                    else try {
-                        clearMessage(event.getChannel());
-                        DiscordCommands.addProof(args);
-                    } catch (Exception e) { e.printStackTrace(); }
-                    break;
-            }
-        switch (number) {
-            /**
-             * getproof
-             */
-            case 962:
-                if (!botChannel) {
-                    clearMessage(event.getChannel());
-                    break;
+                    /**
+                     * updaterecord
+                     */
+                    case DiscordCommands.prefix + "updaterecord":
+                        if (!botChannel) {
+                            clearMessage(event.getChannel());
+                            break;
+                        }
+                        if (help) event.getChannel().sendMessage(DiscordCommands.updaterecordHelp).queue();
+                        else try {
+                            clearMessage(event.getChannel());
+                            DiscordCommands.updateRecord(args);
+                        } catch (Exception e) { e.printStackTrace(); }
+                        break;
+                    /**
+                     * removerecord
+                     */
+                    case DiscordCommands.prefix + "removerecord":
+                        if (!botChannel) {
+                            clearMessage(event.getChannel());
+                            break;
+                        }
+                        if (help) event.getChannel().sendMessage(DiscordCommands.removerecordHelp).queue();
+                        else try {
+                            clearMessage(event.getChannel());
+                            DiscordCommands.removeRecord(args);
+                        } catch (Exception e) { e.printStackTrace(); }
+                        break;
                 }
-                if (help) event.getChannel().sendMessage(DiscordCommands.getproofHelp).queue();
-                else try {
-                    event.getChannel().sendMessage(String.format("<@%s> %s", id, DiscordCommands.getProof(args))).queue();
-                } catch (Exception e) { e.printStackTrace(); }
-                break;
+        } catch (NullPointerException npe) { npe.getMessage(); }
+        switch (args[0]) {
             /**
              * listofrecords
              */
-            case 1503:
+            case DiscordCommands.prefix + "listofrecords":
                 if (!botChannel) {
                     clearMessage(event.getChannel());
                     break;
                 }
                 if (help) event.getChannel().sendMessage(DiscordCommands.listofrecordsHelp).queue();
                 else try {
-                    event.getChannel().sendMessage(String.format("<@%s> %s", id, DiscordCommands.listOfRecords(args))).queue();
+                    event.getChannel().sendMessage(String.format("<@%s>\n%s", id, DiscordCommands.listOfRecords(args))).queue();
                 } catch (Exception e) { e.printStackTrace(); }
                 break;
             /**
              * listofplayers
              */
-            case 1517:
+            case DiscordCommands.prefix + "listofplayers":
                 if (!botChannel) {
                     clearMessage(event.getChannel());
                     break;
                 }
                 if (help) event.getChannel().sendMessage(DiscordCommands.listofplayersHelp).queue();
                 else try {
-                    event.getChannel().sendMessage(String.format("<@%s> %s", id, DiscordCommands.listOfPlayers())).queue();
+                    event.getChannel().sendMessage(String.format("<@%s>\n%s", id, DiscordCommands.listOfPlayers())).queue();
+                } catch (Exception e) { e.printStackTrace(); }
+                break;
+            /**
+             * getposition
+             */
+            case DiscordCommands.prefix + "getposition":
+                if (!botChannel) {
+                    clearMessage(event.getChannel());
+                    break;
+                }
+                if (help) event.getChannel().sendMessage(DiscordCommands.getpositionHelp).queue();
+                else try {
+                    event.getChannel().sendMessage(String.format("<@%s>\n%s", id, DiscordCommands.getPosition(args))).queue();
+                } catch (Exception e) { e.printStackTrace(); }
+                break;
+            /**
+             * estimatepos
+             */
+            case DiscordCommands.prefix + "estimatepos":
+                if (!botChannel) {
+                    clearMessage(event.getChannel());
+                    break;
+                }
+                if (help) event.getChannel().sendMessage(DiscordCommands.estimateposHelp).queue();
+                else try {
+                    event.getChannel().sendMessage(String.format("<@%s>\n%s", id, DiscordCommands.estimatePos(args))).queue();
                 } catch (Exception e) { e.printStackTrace(); }
                 break;
             /**
              * commands
              */
-            case 942:
+            case DiscordCommands.prefix + "commands":
                 if (!botChannel) {
                     clearMessage(event.getChannel());
                     break;
                 }
-                event.getChannel().sendMessage(String.format("<@%s> %s", id, DiscordCommands.commands())).queue();
+                event.getChannel().sendMessage(String.format("<@%s>\n%s", id, DiscordCommands.commands())).queue();
+                break;
+            /**
+             * help
+             */
+            case DiscordCommands.prefix + "help":
+                if (!botChannel) {
+                    clearMessage(event.getChannel());
+                    break;
+                }
+                try {
+                    event.getChannel().sendMessage(Config.readINI().get(3)).queue();
+                } catch (IOException e) { e.printStackTrace(); }
                 break;
         }
     }
@@ -193,7 +215,7 @@ public class DiscordListener extends ListenerAdapter {
             List<Message> list = mh.retrievePast(1).complete();
             String[] ID = list.toString().replace("(", "sgrsgrhst").replace(")", "sgrsgrhst").split("sgrsgrhst");
             if (list.isEmpty()) break;
-            channel.deleteMessageById(ID[ID.length-2]).queue();
+            channel.deleteMessageById(ID[ID.length-2]).submit();
         }
     }
 
@@ -212,10 +234,14 @@ public class DiscordListener extends ListenerAdapter {
         return al;
     }
 
-    private int strToInt(String message) {
-        int number = 0;
-        byte[] messageByte = message.getBytes();
-        for (byte b : messageByte) number += b;
-        return number;
+    private ArrayList<String> readCSV(String path) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(path));
+        ArrayList<String> al = new ArrayList<>();
+        String line = br.readLine();
+        while (line != null) {
+            al.add(line);
+            line = br.readLine();
+        }
+        return al;
     }
 }
