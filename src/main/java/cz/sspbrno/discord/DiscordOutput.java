@@ -10,15 +10,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DiscordOutput {
-    private SQLConnect con;
-
-    public DiscordOutput() throws SQLException {
-        this.con = new SQLConnect();
-    }
-
-    public ArrayList<String> prepareAndSend() throws SQLException, IOException {
+    public static ArrayList<String> prepareAndSend() throws SQLException, IOException {
+    	SQLConnect con = new SQLConnect();
         ArrayList<String[]> db_demon = new ArrayList<>(con.select("demon"));
         ArrayList<String[]> db_completionist = new ArrayList<>(con.select("completionist"));
+        con.close();
+
         String[][] unfilteredList = new String[db_completionist.size()][3];
         ArrayList<String[][]> mid = new ArrayList<>();
         for (int i = 0; i < db_completionist.size(); i++) {
@@ -69,7 +66,7 @@ public class DiscordOutput {
         return trimSize(listFinal);
     }
 
-    public ArrayList<String> trimSize(ArrayList<String> ar) {
+    public static ArrayList<String> trimSize(ArrayList<String> ar) {
         ArrayList<String> list = new ArrayList<>();
         int count = 0;
         if (ar.size()%10 == 0) {
@@ -95,7 +92,7 @@ public class DiscordOutput {
         return list;
     }
 
-    private void sortMultiple(ArrayList<String[][]> mid) {
+    private static void sortMultiple(ArrayList<String[][]> mid) {
         mid.sort((o1, o2) -> {
             String a1 = o1[1][2].split("[(),]")[1].replace("hz", "0").replace("fps", "1");
             String a2 = o2[1][2].split("[(),]")[1].replace("hz", "0").replace("fps", "1");
@@ -121,7 +118,7 @@ public class DiscordOutput {
         });
     }
 
-    private ArrayList<String> creators() throws IOException {
+    private static ArrayList<String> creators() throws IOException {
         ArrayList<String> list = new ArrayList<>();
         List<String> creators = Config.readFile("creators.txt");
         list.add("====================\n**Top " + creators.size() + " CZ/SK Creatoru (Podle CP)**\n");

@@ -63,9 +63,8 @@ public class DiscordCommands {
         SQLConnect con = new SQLConnect();
         con.update();
         con.close();
-        DiscordOutput output = new DiscordOutput();
-        int number = output.prepareAndSend().size();
-        ArrayList<String> preList = output.prepareAndSend();
+        ArrayList<String> preList = DiscordOutput.prepareAndSend();
+        int number = preList.size();
         String[] list = new String[number];
         for (int i = 0; i < number; i++) list[i] = preList.get(i);
         return list;
@@ -110,8 +109,7 @@ public class DiscordCommands {
     }
 
     public static String getPosition(String[] args) throws SQLException, IOException {
-        Leaderboard lead = new Leaderboard();
-        ArrayList<ArrayList<String>> list = lead.sortByRank(lead.shrink(Ranking.playerRanking(0)));
+        ArrayList<ArrayList<String>> list = Leaderboard.sortByRank(Leaderboard.shrink(Ranking.playerRanking(0)));
         int pos = 0;
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).get(1).equalsIgnoreCase(args[1])) pos = i+1;

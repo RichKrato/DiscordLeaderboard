@@ -34,7 +34,7 @@ public class SQLInit {
         String[] dbQuery = {
                 "CREATE TABLE demon ( Name varchar(45), Creator varchar(45), idDemon int(11) PRIMARY KEY);",
                 "CREATE TABLE completionist ( idCompletionist int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT, Player varchar(69), Device varchar(45), Position char(20), Percentage varchar(6) );",
-//                "CREATE TABLE members ( idMembers int(11) PRIMARY KEY, Player varchar(69), Id varchar(45) );"
+                //"CREATE TABLE members ( idMembers int(11) PRIMARY KEY, Player varchar(69), Id varchar(45) );"
         };
         for (String s : dbQuery) dbSt.executeUpdate(s);
         dbCon.close();

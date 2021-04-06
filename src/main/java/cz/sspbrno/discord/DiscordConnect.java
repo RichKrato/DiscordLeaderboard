@@ -8,10 +8,10 @@ import cz.sspbrno.Config;
 
 public class DiscordConnect {
 
-    public DiscordConnect() throws LoginException {
+	public static void connect() throws LoginException {
         JDA bot = JDABuilder.createDefault(Config.discord_token)
                 .setActivity(Activity.playing(Config.discord_activity))
                 .addEventListeners(new DiscordListener())
                 .build();
-    }
+	}
 }

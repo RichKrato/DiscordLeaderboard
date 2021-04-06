@@ -6,6 +6,7 @@ import cz.sspbrno.discord.DiscordOutput;
 import cz.sspbrno.html.ParseLoader;
 import cz.sspbrno.leaderboards.Leaderboard;
 import cz.sspbrno.sql.SQLConnect;
+import cz.sspbrno.sql.SQLInit;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
@@ -14,6 +15,10 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) throws LoginException, IOException, SQLException {
-        DiscordConnect discord = new DiscordConnect();
+    	//DiscordConnect.connect();
+    	ArrayList<String> lead = Leaderboard.topList(0);
+    	for (String s : lead) {
+    		System.out.println(s);
+    	}
     }
 }

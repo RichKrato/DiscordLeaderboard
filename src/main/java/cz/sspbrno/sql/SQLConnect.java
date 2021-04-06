@@ -74,7 +74,7 @@ public class SQLConnect {
     }
 
     public void removeRecord(String player, String placement) throws SQLException {
-        String query = String.format("DELETE * FROM completionist WHERE Player='%s' AND Position='%s';", player, placement);
+        String query = String.format("DELETE FROM completionist WHERE Player='%s' AND Position='%s';", player, placement);
         st.executeUpdate(query);
     }
 
@@ -171,7 +171,8 @@ public class SQLConnect {
         }
         for (int i = 0; i < hs.size(); i++) {
             int lol = 0;
-            for (String s : al) if (s.equals(hs.toArray()[i])) lol++;
+            for (String s : al) 
+            	if (s.equals(hs.toArray()[i])) lol++;
             String[] arr = {String.valueOf(hs.toArray()[i]), String.valueOf(lol)};
             if (!String.valueOf(hs.toArray()[i]).contains("+")) list.add(arr);
         }
