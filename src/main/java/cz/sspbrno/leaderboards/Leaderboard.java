@@ -66,47 +66,6 @@ public class Leaderboard {
                 size = newList.size();
                 break;
         }
-        /*for (int i = 0; i < size; i++) {
-            switch (newList.get(i).size()) {
-                case 20:
-                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s), %s %s%% (%s), %s %s%% (%s), %s %s%% (%s), %s %s%% (%s), %s %s%% (%s)",
-                            i+1, newList.get(i).get(1),
-                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4), newList.get(i).get(5), newList.get(i).get(6), newList.get(i).get(7),
-                            newList.get(i).get(8), newList.get(i).get(9), newList.get(i).get(10), newList.get(i).get(11), newList.get(i).get(12), newList.get(i).get(13),
-                            newList.get(i).get(14), newList.get(i).get(15), newList.get(i).get(16), newList.get(i).get(17), newList.get(i).get(18), newList.get(i).get(19)));
-                    break;
-                case 17:
-                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s), %s %s%% (%s), %s %s%% (%s), %s %s%% (%s), %s %s%% (%s)",
-                            i+1, newList.get(i).get(1),
-                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4), newList.get(i).get(5), newList.get(i).get(6), newList.get(i).get(7),
-                            newList.get(i).get(8), newList.get(i).get(9), newList.get(i).get(10), newList.get(i).get(11), newList.get(i).get(12), newList.get(i).get(13),
-                            newList.get(i).get(14), newList.get(i).get(15), newList.get(i).get(16)));
-                    break;
-                case 14:
-                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s), %s %s%% (%s), %s %s%% (%s), %s %s%% (%s))",
-                            i+1, newList.get(i).get(1),
-                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4), newList.get(i).get(5), newList.get(i).get(6), newList.get(i).get(7),
-                            newList.get(i).get(8), newList.get(i).get(9), newList.get(i).get(10), newList.get(i).get(11), newList.get(i).get(12), newList.get(i).get(13)));
-                    break;
-                case 11:
-                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s), %s %s%% (%s), %s %s%% (%s)",
-                            i+1, newList.get(i).get(1),
-                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4), newList.get(i).get(5), newList.get(i).get(6), newList.get(i).get(7),
-                            newList.get(i).get(8), newList.get(i).get(9), newList.get(i).get(10)));
-                    break;
-                case 8:
-                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s), %s %s%% (%s)",
-                            i+1, newList.get(i).get(1),
-                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4), newList.get(i).get(5), newList.get(i).get(6), newList.get(i).get(7)));
-                    break;
-                case 5:
-                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s)",
-                            i+1, newList.get(i).get(1),
-                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4)));
-                    break;
-            }
-        }*/
-        leaderboard = withPoints(newList, size);
         return withPoints(newList, size);
     }
 
@@ -120,9 +79,7 @@ public class Leaderboard {
     	ArrayList<ArrayList<String>> newNewList = new ArrayList<>(newList);
     	DecimalFormat df = new DecimalFormat("0.000");
     	for (int i = 0; i < newList.size(); i++) {
-    		System.out.println(Arrays.toString(newList.get(i).toArray()));
     		int playerComps = (newList.get(i).size() - 2) / 4;
-    		System.out.println(String.format("%d %d", i, newList.size()));
     		for (int j = 0; j < playerComps; j++) {
     			String score = String.valueOf(df.format(Formula.formula(listSize, newList.get(i).get(5+j*5), newList.get(i).get(3+j*5), newList.get(i).get(4+j*5))));
     			newNewList.get(i).add(6+j*5, score);
@@ -130,50 +87,50 @@ public class Leaderboard {
     	}
         for (int i = 0; i < size; i++) {
             switch (newNewList.get(i).size()) {
-                case 20:
-                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s); %s, %s %s%% (%s); %s, %s %s%% (%s); %s, %s %s%% (%s); %s, %s %s%% (%s); %s, %s %s%% (%s); %s",
+                case 32:
+                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s); '%s', %s %s%% (%s); '%s', %s %s%% (%s); '%s', %s %s%% (%s); '%s', %s %s%% (%s); '%s', %s %s%% (%s); '%s'",
                             i+1, newNewList.get(i).get(1),
-                            newNewList.get(i).get(2), newNewList.get(i).get(3), newNewList.get(i).get(4), newNewList.get(i).get(5),
-                            newNewList.get(i).get(6), newNewList.get(i).get(7), newNewList.get(i).get(8), newNewList.get(i).get(9), 
-                            newNewList.get(i).get(10), newNewList.get(i).get(11), newNewList.get(i).get(12), newNewList.get(i).get(13),
-                            newNewList.get(i).get(14), newNewList.get(i).get(15), newNewList.get(i).get(16), newNewList.get(i).get(17), 
-                            newNewList.get(i).get(18), newNewList.get(i).get(19), newNewList.get(i).get(20), newNewList.get(i).get(21), 
-                            newNewList.get(i).get(22), newNewList.get(i).get(23), newNewList.get(i).get(24), newNewList.get(i).get(25)));
+                            newNewList.get(i).get(2), newNewList.get(i).get(3), newNewList.get(i).get(4), newNewList.get(i).get(6),
+                            newNewList.get(i).get(7), newNewList.get(i).get(8), newNewList.get(i).get(9), newNewList.get(i).get(11), 
+                            newNewList.get(i).get(12), newNewList.get(i).get(13), newNewList.get(i).get(14), newNewList.get(i).get(16),
+                            newNewList.get(i).get(17), newNewList.get(i).get(18), newNewList.get(i).get(19), newNewList.get(i).get(21), 
+                            newNewList.get(i).get(22), newNewList.get(i).get(23), newNewList.get(i).get(24), newNewList.get(i).get(26), 
+                            newNewList.get(i).get(27), newNewList.get(i).get(28), newNewList.get(i).get(29), newNewList.get(i).get(31)));
+                    break;
+                case 27:
+                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s); '%s', %s %s%% (%s); '%s', %s %s%% (%s); '%s', %s %s%% (%s); '%s', %s %s%% (%s); '%s'",
+                            i+1, newNewList.get(i).get(1),
+                            newNewList.get(i).get(2), newNewList.get(i).get(3), newNewList.get(i).get(4), newNewList.get(i).get(6),
+                            newNewList.get(i).get(7), newNewList.get(i).get(8), newNewList.get(i).get(9), newNewList.get(i).get(11), 
+                            newNewList.get(i).get(12), newNewList.get(i).get(13), newNewList.get(i).get(14), newNewList.get(i).get(16),
+                            newNewList.get(i).get(17), newNewList.get(i).get(18), newNewList.get(i).get(19), newNewList.get(i).get(21), 
+                            newNewList.get(i).get(22), newNewList.get(i).get(23), newNewList.get(i).get(24), newNewList.get(i).get(26)));
+                    break;
+                case 22:
+                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s); '%s', %s %s%% (%s); '%s', %s %s%% (%s); '%s', %s %s%% (%s); '%s'",
+                            i+1, newNewList.get(i).get(1),
+                            newNewList.get(i).get(2), newNewList.get(i).get(3), newNewList.get(i).get(4), newNewList.get(i).get(6),
+                            newNewList.get(i).get(7), newNewList.get(i).get(8), newNewList.get(i).get(9), newNewList.get(i).get(11), 
+                            newNewList.get(i).get(12), newNewList.get(i).get(13), newNewList.get(i).get(14), newNewList.get(i).get(16),
+                            newNewList.get(i).get(17), newNewList.get(i).get(18), newNewList.get(i).get(19), newNewList.get(i).get(21)));
                     break;
                 case 17:
-                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s); %s, %s %s%% (%s); %s, %s %s%% (%s); %s, %s %s%% (%s); %s, %s %s%% (%s); %s",
+                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s); '%s', %s %s%% (%s); '%s', %s %s%% (%s); '%s'",
                             i+1, newNewList.get(i).get(1),
-                            newNewList.get(i).get(2), newNewList.get(i).get(3), newNewList.get(i).get(4), newNewList.get(i).get(5),
-                            newNewList.get(i).get(6), newNewList.get(i).get(7), newNewList.get(i).get(8), newNewList.get(i).get(9), 
-                            newNewList.get(i).get(10), newNewList.get(i).get(11), newNewList.get(i).get(12), newNewList.get(i).get(13),
-                            newNewList.get(i).get(14), newNewList.get(i).get(15), newNewList.get(i).get(16), newNewList.get(i).get(17), 
-                            newNewList.get(i).get(18), newNewList.get(i).get(19), newNewList.get(i).get(20), newNewList.get(i).get(21)));
+                            newNewList.get(i).get(2), newNewList.get(i).get(3), newNewList.get(i).get(4), newNewList.get(i).get(6),
+                            newNewList.get(i).get(7), newNewList.get(i).get(8), newNewList.get(i).get(9), newNewList.get(i).get(11), 
+                            newNewList.get(i).get(12), newNewList.get(i).get(13), newNewList.get(i).get(14), newNewList.get(i).get(16)));
                     break;
-                case 14:
-                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s); %s, %s %s%% (%s); %s, %s %s%% (%s); %s, %s %s%% (%s); %s",
+                case 12:
+                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s); '%s', %s %s%% (%s); '%s'",
                             i+1, newNewList.get(i).get(1),
-                            newNewList.get(i).get(2), newNewList.get(i).get(3), newNewList.get(i).get(4), newNewList.get(i).get(5),
-                            newNewList.get(i).get(6), newNewList.get(i).get(7), newNewList.get(i).get(8), newNewList.get(i).get(9), 
-                            newNewList.get(i).get(10), newNewList.get(i).get(11), newNewList.get(i).get(12), newNewList.get(i).get(13),
-                            newNewList.get(i).get(14), newNewList.get(i).get(15), newNewList.get(i).get(16), newNewList.get(i).get(17)));
+                            newNewList.get(i).get(2), newNewList.get(i).get(3), newNewList.get(i).get(4), newNewList.get(i).get(6),
+                            newNewList.get(i).get(7), newNewList.get(i).get(8), newNewList.get(i).get(9), newNewList.get(i).get(11)));
                     break;
-                case 11:
-                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s); %s, %s %s%% (%s); %s, %s %s%% (%s); %s",
+                case 7:
+                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s); '%s'",
                             i+1, newNewList.get(i).get(1),
-                            newNewList.get(i).get(2), newNewList.get(i).get(3), newNewList.get(i).get(4), newNewList.get(i).get(5),
-                            newNewList.get(i).get(6), newNewList.get(i).get(7), newNewList.get(i).get(8), newNewList.get(i).get(9), 
-                            newNewList.get(i).get(10), newNewList.get(i).get(11), newNewList.get(i).get(12), newNewList.get(i).get(13)));
-                    break;
-                case 8:
-                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s); %s, %s %s%% (%s); %s",
-                            i+1, newNewList.get(i).get(1),
-                            newNewList.get(i).get(2), newNewList.get(i).get(3), newNewList.get(i).get(4), newNewList.get(i).get(5),
-                            newNewList.get(i).get(6), newNewList.get(i).get(7), newNewList.get(i).get(8), newNewList.get(i).get(9)));
-                    break;
-                case 5:
-                    leaderboard.add(String.format("**%s. %s** - %s %s%% (%s); %s",
-                            i+1, newNewList.get(i).get(1),
-                            newNewList.get(i).get(2), newNewList.get(i).get(3), newNewList.get(i).get(4), newNewList.get(i).get(5)));
+                            newNewList.get(i).get(2), newNewList.get(i).get(3), newNewList.get(i).get(4), newNewList.get(i).get(6)));
                     break;
             }
         }

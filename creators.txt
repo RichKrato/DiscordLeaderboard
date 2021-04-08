@@ -1,31 +1,36 @@
-1. SaabS (SK) - 76 CP
-2-3. Wolfen (CZ) - 30 CP
-2-3. DamianosKabanos (SK) - 30 CP
-4. ReYzen (SK) - 24 CP
-5. Warrek (CZ) - 22 CP
-6. Morce (CZ) - 20 CP
-7. Milos482 (SK) - 16 CP
-8-9. ImSamo (SK) - 13 CP
-8-9. Kubias (CZ) - 13 CP
-10-11. CorroX (SK) - 12 CP
-10-11. TempledoX (CZ) - 12 CP
-12-13. Ramppi (CZ) - 10 CP
-12-13. Zajicek (CZ) - 10 CP
-14-17. CrafGD (CZ) - 8 CP
-14-17. PytekGD/LaysManCZ (CZ) - 8 CP
-14-17. Radius (CZ) - 8 CP
-14-17. sssturtle2005 (CZ) - 8 CP
-18. Djdvd17 (CZ) - 7 CP
-19-21. DragonSK (SK) - 6 CP
-19-21. Ondys25 (CZ) - 6 CP
-19-21. TomawiN (SK) - 6 CP
-22-23. DrakeGhast (CZ) - 5 CP
-22-23. FlyArCz (CZ) - 5 CP
-24. ZeffZane (CZ) - 4 CP
-25. GREEN (CZ) - 3 CP
-26-30. Joe12 (CZ) - 2 CP
-26-30. MobiGFX (SK) - 2 CP
-26-30. Pakki (CZ) - 2 CP
-26-30. Radovan258 (CZ) - 2 CP
-26-30. TamTixx (SK) - 2 CP
-31. SpegrNek/Cvolton (CZ) - 1 CP
+1. SaabS - 82 CP
+2. DamianosKabanos - 35 CP
+3. wlfn - 30 CP
+4. ReYzen - 26 CP
+5. Warrek - 22 CP
+6. ImSamo - 21 CP
+7. Morce - 20 CP
+8. CorroX - 18 CP
+9-10. Milos482 - 16 CP
+9-10. TempledoX - 16 CP
+11. Kubias - 15 CP
+12-13. Ramppi - 10 CP
+12-13. Zajicek - 10 CP
+14. DiaboloHD - 9 CP
+15-19. CrafGD - 8 CP
+15-19. PytekGD/LaysManCZ - 8 CP
+15-19. Radius - 8 CP
+15-19. sssturtle2005 - 8 CP
+15-19. TomawiN - 8 CP
+20. Djdvd17 - 7 CP
+21-22. DragonSK - 6 CP
+21-22. Ondys25 - 6 CP
+23-24. DrakeGhast - 5 CP
+23-24. FlyArCz - 5 CP
+25-27. do1Xy - 4 CP
+25-27. ZeffZane - 4 CP
+25-27. ZiTron - 4 CP
+28. GREEN - 3 CP
+29-35. Joe12 - 2 CP
+29-35. MobiGFX - 2 CP
+29-35. Pakki - 2 CP
+29-35. Radovan258 - 2 CP
+29-35. SubStra - 2 CP
+29-35. TamTixx - 2 CP
+29-35. VladAAA - 2 CP
+36. SpegrNek/Cvolton - 1 CP
