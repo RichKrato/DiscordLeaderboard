@@ -1,7 +1,7 @@
 # DiscordLeaderboard
 
-Text based Leaderboard bot for Discord
+## Text based Leaderboard bot for Discord
 
-Written in Java
+Project made for Maturita exam, written in Java
 
 Libraries included: Jsoup, JDA, MySQL
