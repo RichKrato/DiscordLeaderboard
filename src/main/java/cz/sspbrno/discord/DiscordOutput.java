@@ -3,10 +3,10 @@ package cz.sspbrno.discord;
 import cz.sspbrno.Config;
 import cz.sspbrno.leaderboards.Leaderboard;
 import cz.sspbrno.sql.SQLConnect;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DiscordOutput {
@@ -69,21 +69,21 @@ public class DiscordOutput {
     public static ArrayList<String> trimSize(ArrayList<String> ar) {
         ArrayList<String> list = new ArrayList<>();
         int count = 0;
-        if (ar.size()%10 == 0) {
-            for (int i = 1; i <= ar.size()/10; i++) {
-                String[] lol = new String[10];
-                for (int j = 0; j < 10; j++) {
-                    lol[j] = ar.get(i*10+j-10);
+        if (ar.size()%6 == 0) {
+            for (int i = 1; i <= ar.size()/6; i++) {
+                String[] lol = new String[6];
+                for (int j = 0; j < 6; j++) {
+                    lol[j] = ar.get(i*6+j-6);
                     count++;
                 }
                 list.add(String.join("\n", lol));
             }
         } else {
-            for (int i = 1; i <= ar.size()/10+1; i++) {
-                String[] lol = new String[10];
-                for (int j = 0; j < 10; j++) {
+            for (int i = 1; i <= ar.size()/6+1; i++) {
+                String[] lol = new String[6];
+                for (int j = 0; j < 6; j++) {
                     try {
-                        lol[j] = ar.get(i*10+j-10);
+                        lol[j] = ar.get(i*6+j-6);
                     } catch (IndexOutOfBoundsException ioobe) { lol[j] = ""; }
                 }
                 list.add(String.join("\n", lol));
@@ -99,15 +99,21 @@ public class DiscordOutput {
             if (a1.equals("mobile") && a2.equals("mobile")) return 0;
             else if (a1.equals("mobile")) return -1;
             else if (a2.equals("mobile")) return 1;
-            return Integer.compare(Integer.parseInt(a1), Integer.parseInt(a2));
+            else return Integer.compare(Integer.parseInt(a1), Integer.parseInt(a2));
         });
         mid.sort((o1, o2) -> {
             String[] a1 = o1[1][1].split("[%-]");
             String[] a2 = o2[1][1].split("[%-]");
             if (a1.length == 1 || a2.length == 1) {
-                if (a1.length == 1 && a2.length == 2) return Integer.compare(Integer.parseInt(a2[1]) - Integer.parseInt(a2[0]), Integer.parseInt(a1[0]));
-                else if (a2.length == 1 && a1.length == 2) return Integer.compare(Integer.parseInt(a2[0]), Integer.parseInt(a1[1]) - Integer.parseInt(a1[0]));
-                else return Integer.compare(Integer.parseInt(a2[0]), Integer.parseInt(a1[0]));
+                if (a1.length == 1 && a2.length == 2) {
+                    return Integer.compare(Integer.parseInt(a2[1]) - Integer.parseInt(a2[0]), Integer.parseInt(a1[0]));
+                }
+                else if (a1.length == 2) {
+                    return Integer.compare(Integer.parseInt(a2[0]), Integer.parseInt(a1[1]) - Integer.parseInt(a1[0]));
+                }
+                else {
+                    return Integer.compare(Integer.parseInt(a2[0]), Integer.parseInt(a1[0]));
+                }
             }
             else return Integer.compare(Integer.parseInt(a2[1]) - Integer.parseInt(a2[0]), Integer.parseInt(a1[1]) - Integer.parseInt(a1[0]));
         });
@@ -118,7 +124,7 @@ public class DiscordOutput {
         });
     }
 
-    private static ArrayList<String> creators() throws IOException {
+    public static ArrayList<String> creators() throws IOException {
         ArrayList<String> list = new ArrayList<>();
         List<String> creators = Config.readFile("creators.txt");
         list.add("====================\n**Top " + creators.size() + " CZ/SK Creatoru (Podle CP)**\n");
@@ -126,6 +132,6 @@ public class DiscordOutput {
             String[] creator = s.split(" ");
             list.add(String.format("**%s %s** %s %s %s", creator[0], creator[1], creator[2], creator[3], creator[4]));
         }
-        return list;
+        return trimSize(list);
     }
 }

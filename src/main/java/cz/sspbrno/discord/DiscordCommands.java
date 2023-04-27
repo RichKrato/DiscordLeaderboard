@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 public class DiscordCommands {
@@ -32,12 +31,12 @@ public class DiscordCommands {
     public static final String renameHelp = "*"+prefix+"rename Bogen boge*\n" +
             "***Bogen*** - refers to current name on the leaderboard\n" +
             "***boge*** - refers to a new name to be updated on the leaderboard";
-    public static final String updaterecordHelp = "*"+prefix+"updaterecord klouad infernal-abyss 100 www.youtube.com/watch?v=RvjfmZNgnpI*\n" +
+    public static final String updateHelp = "*"+prefix+"update klouad infernal-abyss 100 www.youtube.com/watch?v=RvjfmZNgnpI*\n" +
             "***klouad*** - refers to a name the record belongs to\n" +
             "***infernal-abyss*** - refers to a level that it's record is getting updated, all spaces must be replaced with a dash(-)\n" +
             "***100*** - refers to a new record\n" +
             "***www.youtube.com/watch?v=RvjfmZNgnpI*** - optional variable, adds proof to a new record";
-    public static final String removerecordHelp = "*"+prefix+"removerecord Trewis carnage-mode*\n" +
+    public static final String removeHelp = "*"+prefix+"remove Trewis carnage-mode*\n" +
             "***Trewis*** - refers to a name of a player\n" +
             "***carnage-mode*** - refers to a level the record is getting deleted, all spaces must be replaced with a dash(-)\n";
     public static final String listofrecordsHelp = "*"+prefix+"listofrecords suni*\n" +
