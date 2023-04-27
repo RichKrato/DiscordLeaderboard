@@ -5,9 +5,6 @@ import cz.sspbrno.html.ParseLoader;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -136,22 +133,17 @@ public class SQLConnect {
             String[] a2 = o2[2].split("[%-]");
             if (a1.length == 1 || a2.length == 1) {
                 if (a1.length == 1 && a2.length == 2) {
-                    if (Integer.parseInt(a2[1]) - Integer.parseInt(a2[0]) < Integer.parseInt(a1[0])) return -1;
-                    else return 1;
-                } else if (a2.length == 1 && a1.length == 2) {
-                    if (Integer.parseInt(a2[0]) < Integer.parseInt(a1[1]) - Integer.parseInt(a1[0])) return -1;
-                    else return 1;
+                    return Integer.compare(Integer.parseInt(a2[1]) - Integer.parseInt(a2[0]), Integer.parseInt(a1[0]));
+                } else if (a1.length == 2) {
+                    return Integer.compare(Integer.parseInt(a2[0]), Integer.parseInt(a1[1]) - Integer.parseInt(a1[0]));
                 } else {
-                    if (Integer.parseInt(a2[0]) < Integer.parseInt(a1[0])) return -1;
-                    else return 1;
+                    return Integer.compare(Integer.parseInt(a2[0]), Integer.parseInt(a1[0]));
                 }
-            } else if (Integer.parseInt(a2[1]) - Integer.parseInt(a2[0]) < Integer.parseInt(a1[1]) - Integer.parseInt(a1[0])) return -1;
-            else return 1;
+            } else return Integer.compare(Integer.parseInt(a2[1]) - Integer.parseInt(a2[0]), Integer.parseInt(a1[1]) - Integer.parseInt(a1[0]));
+
         });
         list.sort((o1, o2) -> {
-            if (Integer.parseInt(o1[4]) < Integer.parseInt(o2[4])) return -1;
-            else if (Integer.parseInt(o1[4]) > Integer.parseInt(o2[4])) return 1;
-            return 0;
+            return Integer.compare(Integer.parseInt(o1[4]), Integer.parseInt(o2[4]));
         });
         return list;
     }

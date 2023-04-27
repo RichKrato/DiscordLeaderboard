@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Leaderboard {
 
@@ -66,12 +65,10 @@ public class Leaderboard {
                 size = newList.size();
                 break;
         }
-        return withPoints(newList, size);
+        return withoutPoints(newList, leaderboard, size);
     }
 
-    private static ArrayList<String> withPoints(ArrayList<ArrayList<String>> newList, int size) throws SQLException {
-    	ArrayList<String> leaderboard = new ArrayList<>();
-
+    private static ArrayList<String> withPoints(ArrayList<ArrayList<String>> newList, ArrayList<String> leaderboard, int size) throws SQLException {
     	SQLConnect con = new SQLConnect();
     	int listSize = con.select("demon").size();
     	con.close();
@@ -137,42 +134,41 @@ public class Leaderboard {
     	return leaderboard;
     }
 
-    private static ArrayList<String> withoutPoints(ArrayList<ArrayList<String>> newList, int size) {
-    	ArrayList<String> leaderboard = new ArrayList<>();
+    private static ArrayList<String> withoutPoints(ArrayList<ArrayList<String>> newList, ArrayList<String> leaderboard, int size) {
         for (int i = 0; i < size; i++) {
             switch (newList.get(i).size()) {
-                case 20:
+                case 26:
                     leaderboard.add(String.format("**%s. %s** - %s %s%% (%s), %s %s%% (%s), %s %s%% (%s), %s %s%% (%s), %s %s%% (%s), %s %s%% (%s)",
                             i+1, newList.get(i).get(1),
-                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4), newList.get(i).get(5), newList.get(i).get(6), newList.get(i).get(7),
-                            newList.get(i).get(8), newList.get(i).get(9), newList.get(i).get(10), newList.get(i).get(11), newList.get(i).get(12), newList.get(i).get(13),
-                            newList.get(i).get(14), newList.get(i).get(15), newList.get(i).get(16), newList.get(i).get(17), newList.get(i).get(18), newList.get(i).get(19)));
+                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4), newList.get(i).get(6), newList.get(i).get(7), newList.get(i).get(8),
+                            newList.get(i).get(10), newList.get(i).get(11), newList.get(i).get(12), newList.get(i).get(14), newList.get(i).get(15), newList.get(i).get(16),
+                            newList.get(i).get(18), newList.get(i).get(19), newList.get(i).get(20), newList.get(i).get(22), newList.get(i).get(23), newList.get(i).get(24)));
                     break;
-                case 17:
+                case 22:
                     leaderboard.add(String.format("**%s. %s** - %s %s%% (%s), %s %s%% (%s), %s %s%% (%s), %s %s%% (%s), %s %s%% (%s)",
                             i+1, newList.get(i).get(1),
-                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4), newList.get(i).get(5), newList.get(i).get(6), newList.get(i).get(7),
-                            newList.get(i).get(8), newList.get(i).get(9), newList.get(i).get(10), newList.get(i).get(11), newList.get(i).get(12), newList.get(i).get(13),
-                            newList.get(i).get(14), newList.get(i).get(15), newList.get(i).get(16)));
+                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4), newList.get(i).get(6), newList.get(i).get(7), newList.get(i).get(8),
+                            newList.get(i).get(10), newList.get(i).get(11), newList.get(i).get(12), newList.get(i).get(14), newList.get(i).get(15), newList.get(i).get(16),
+                            newList.get(i).get(18), newList.get(i).get(19), newList.get(i).get(20)));
                     break;
-                case 14:
+                case 18:
                     leaderboard.add(String.format("**%s. %s** - %s %s%% (%s), %s %s%% (%s), %s %s%% (%s), %s %s%% (%s))",
                             i+1, newList.get(i).get(1),
-                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4), newList.get(i).get(5), newList.get(i).get(6), newList.get(i).get(7),
-                            newList.get(i).get(8), newList.get(i).get(9), newList.get(i).get(10), newList.get(i).get(11), newList.get(i).get(12), newList.get(i).get(13)));
+                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4), newList.get(i).get(6), newList.get(i).get(7), newList.get(i).get(8),
+                            newList.get(i).get(10), newList.get(i).get(11), newList.get(i).get(12), newList.get(i).get(14), newList.get(i).get(15), newList.get(i).get(16)));
                     break;
-                case 11:
+                case 14:
                     leaderboard.add(String.format("**%s. %s** - %s %s%% (%s), %s %s%% (%s), %s %s%% (%s)",
                             i+1, newList.get(i).get(1),
-                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4), newList.get(i).get(5), newList.get(i).get(6), newList.get(i).get(7),
-                            newList.get(i).get(8), newList.get(i).get(9), newList.get(i).get(10)));
+                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4), newList.get(i).get(6), newList.get(i).get(7), newList.get(i).get(8),
+                            newList.get(i).get(10), newList.get(i).get(11), newList.get(i).get(12)));
                     break;
-                case 8:
+                case 10:
                     leaderboard.add(String.format("**%s. %s** - %s %s%% (%s), %s %s%% (%s)",
                             i+1, newList.get(i).get(1),
-                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4), newList.get(i).get(5), newList.get(i).get(6), newList.get(i).get(7)));
+                            newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4), newList.get(i).get(6), newList.get(i).get(7), newList.get(i).get(8)));
                     break;
-                case 5:
+                case 6:
                     leaderboard.add(String.format("**%s. %s** - %s %s%% (%s)",
                             i+1, newList.get(i).get(1),
                             newList.get(i).get(2), newList.get(i).get(3), newList.get(i).get(4)));
@@ -183,23 +179,6 @@ public class Leaderboard {
     }
 
     public static ArrayList<ArrayList<String>> sortByRank(ArrayList<ArrayList<String>> list) {
-        ArrayList<String[]> preList = new ArrayList<>();
-        /*ArrayList<ArrayList<String>> newList;
-        for (ArrayList<String> strings : list) {
-        	System.out.println(Arrays.toString(strings.toArray()));
-            String[] lul = new String[strings.size() - (strings.size() - 2) / 4];
-            lul[0] = strings.get(0);
-            lul[1] = strings.get(1);
-            int count = 2;
-            for (int j = 1; j <= (strings.size() - 2) / 4; j++) {
-                lul[count] = strings.get(j*4-2);
-                lul[count+1] = strings.get(j*4-1);
-                lul[count+2] = strings.get(j*4);
-                count += 3;
-            }
-            preList.add(lul);
-        }
-        newList = shrink(preList);*/
         list.sort((o1, o2) -> {
             if (Float.parseFloat(o1.get(0)) < Float.parseFloat(o2.get(0))) return 1;
             else if (Float.parseFloat(o1.get(0)) > Float.parseFloat(o2.get(0))) return -1;
