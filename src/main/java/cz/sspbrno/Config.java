@@ -13,7 +13,7 @@ public class Config {
     public static String db_passwd;
     public static String discord_token;
     public static String discord_activity;
-    private static final String path = "config.ini";
+    private static final String path = "D:/projects/Leaderboard2/config.ini";
 
     static {
         try {

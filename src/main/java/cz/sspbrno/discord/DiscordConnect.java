@@ -71,7 +71,13 @@ public class DiscordConnect {
 						.addOption(OptionType.STRING, "player", "xddholder", true)
 						.addOption(OptionType.STRING, "refresh-rate", "hz or fps", true)
 						.addOption(OptionType.STRING, "level", "lowercase, dash sign for space", true)
-						.addOption(OptionType.STRING, "progress", "intervals without percent", true)
+						.addOption(OptionType.STRING, "progress", "intervals without percent", true),
+				Commands.slash("commands", "shows commands")
+                        .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MESSAGE_SEND))
+						.setGuildOnly(true),
+                Commands.slash("help", "guess what it does")
+						.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MESSAGE_SEND))
+						.setGuildOnly(true)
 		).queue();
 	}
 }

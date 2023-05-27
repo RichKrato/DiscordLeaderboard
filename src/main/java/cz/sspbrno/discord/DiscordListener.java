@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.channel.unions.GuildMessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,21 +21,103 @@ import java.util.Objects;
 public class DiscordListener extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        List<String> listArgs = new ArrayList<>();
+        for (OptionMapping opt : event.getOptions())
+            listArgs.add(opt.getAsString());
+        String[] args = (String[]) listArgs.toArray();
+        long id = Objects.requireNonNull(event.getMember()).getIdLong();
+        boolean botChannel = event.getChannel().toString().contains("bot");
+
+        if (Arrays.toString(Objects.requireNonNull(event.getMember()).
+                getRoles().toArray()).toLowerCase().contains("ceo of gmd")) {
+            switch (event.getName()) {
+                case "createlist":
+                    try {
+                        if (!botChannel) break;
+                        if (Config.readIV("listCreated").equals("1")) {
+                            event.reply("list exists, dumbass").queue();
+                        } else {
+                            DiscordCommands.createList();
+                        }
+                    } catch (Exception e) { e.printStackTrace(); }
+                    break;
+                case "updatelist":
+                    try {
+                        if (!event.getChannel().toString().contains("sin-slavy")) break;
+                        String[] list = DiscordCommands.updateList();
+                        for (String s : list) event.getChannel().sendMessage(s).submit();
+                    } catch (Exception e) { e.printStackTrace(); }
+                    break;
+                case "add":
+                    try {
+                        if (!botChannel) break;
+                        DiscordCommands.add(args);
+                    } catch (Exception e) { e.printStackTrace(); }
+                    break;
+                case "rename":
+                    try {
+                        if (!botChannel) break;
+                        DiscordCommands.rename(args);
+                    } catch (Exception e) { e.printStackTrace(); }
+                    break;
+                case "update":
+                    try {
+                        if (!botChannel) break;
+                        DiscordCommands.updateRecord(args);
+                    } catch (Exception e) { e.printStackTrace(); }
+                    break;
+                case "remove":
+                    try {
+                        if (!botChannel) break;
+                        DiscordCommands.removeRecord(args);
+                    } catch (Exception e) { e.printStackTrace(); }
+                    break;
+            }
+        }
         switch (event.getName()) {
-            case "add":
-                Arrays.toString(Objects.requireNonNull(event.getMember()).
-                        getRoles().toArray()).toLowerCase().contains("ceo of gmd");
+            case "listofrecords":
+                try {
+                    if (!botChannel) break;
+                    event.reply(String.format("<@%s>\n%s", id, DiscordCommands.listOfRecords(args))).queue();
+                } catch (Exception e) { e.printStackTrace(); }
+                break;
+            case "listofplayers":
+                try {
+                    if (!botChannel) break;
+                    event.reply(String.format("<@%s>\n%s", id, DiscordCommands.listOfPlayers())).queue();
+                } catch (Exception e) { e.printStackTrace(); }
+                break;
+            case "getpos":
+                try {
+                    if (!botChannel) break;
+                    event.reply(String.format("<@%s>\n%s", id, DiscordCommands.getPosition(args))).queue();
+                } catch (Exception e) { e.printStackTrace(); }
+                break;
+            case "estimatepos":
+                try {
+                    if (!botChannel) break;
+                    event.reply(String.format("<@%s>\n%s", id, DiscordCommands.estimatePos(args))).queue();
+                } catch (Exception e) { e.printStackTrace(); }
+                break;
+            case "commands":
+                if (!botChannel) break;
+                event.reply(String.format("<@%s>\n%s", id, DiscordCommands.commands())).queue();
+                break;
+            case "help":
+                try {
+                    if (!botChannel) break;
+                    event.reply(Config.readINI().get(3)).queue();
+                } catch (IOException e) { e.printStackTrace(); }
                 break;
         }
     }
 
     public void onMessageReceived(MessageReceivedEvent event) {
-        String arg = event.getMessage().getContentRaw().toString();
         String[] args = event.getMessage().getContentRaw().split(" ");
         boolean help = false;
         if (args.length > 1) help = args[1].equals("-h") || args[1].equals("--help");
         boolean botChannel = event.getChannel().toString().contains("bot");
-        long id = event.getAuthor().getIdLong();
+        long id = Objects.requireNonNull(event.getMember()).getIdLong();
 
         try {
             if (Arrays.toString(Objects.requireNonNull(event.getMember()).
@@ -44,7 +127,6 @@ public class DiscordListener extends ListenerAdapter {
                         /**
                          * create list
                          */
-                        System.out.println("create list");
                         if (!botChannel) {
                             clearMessage(event.getGuildChannel());
                         }
@@ -53,11 +135,10 @@ public class DiscordListener extends ListenerAdapter {
                             clearMessage(event.getGuildChannel());
                             if (Config.readIV("listCreated").equals("1")) {
                                 event.getChannel().sendMessage("list exists, dumbass").queue();
+                            } else {
+                                DiscordCommands.createList();
                             }
-                            DiscordCommands.createList();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        } catch (Exception e) { e.printStackTrace(); }
                     }
                     case DiscordCommands.prefix + "updatelist" -> {
                         /**
@@ -71,9 +152,7 @@ public class DiscordListener extends ListenerAdapter {
                             clearMessages(event.getGuildChannel());
                             String[] list = DiscordCommands.updateList();
                             for (String s : list) event.getChannel().sendMessage(s).submit();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        } catch (Exception e) { e.printStackTrace(); }
                     }
                     case DiscordCommands.prefix + "add" -> {
                         /**
@@ -91,15 +170,11 @@ public class DiscordListener extends ListenerAdapter {
                                 else csv = readCSV();
                                 for (String s : csv)
                                     event.getChannel().sendMessage(DiscordCommands.prefix + "add " + s).queue();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                            } catch (Exception e) { e.printStackTrace(); }
                         else try {
                                 clearMessage(event.getGuildChannel());
                                 DiscordCommands.add(args);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                            } catch (Exception e) { e.printStackTrace(); }
                     }
                     case DiscordCommands.prefix + "rename" -> {
                         /**
@@ -112,9 +187,7 @@ public class DiscordListener extends ListenerAdapter {
                         else try {
                             clearMessage(event.getGuildChannel());
                             DiscordCommands.rename(args);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        } catch (Exception e) { e.printStackTrace(); }
                     }
                     case DiscordCommands.prefix + "update" -> {
                         /**
@@ -127,9 +200,7 @@ public class DiscordListener extends ListenerAdapter {
                         else try {
                             clearMessage(event.getGuildChannel());
                             DiscordCommands.updateRecord(args);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        } catch (Exception e) { e.printStackTrace(); }
                     }
                     case DiscordCommands.prefix + "remove" -> {
                         /**
@@ -142,9 +213,7 @@ public class DiscordListener extends ListenerAdapter {
                         else try {
                             clearMessage(event.getGuildChannel());
                             DiscordCommands.removeRecord(args);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        } catch (Exception e) { e.printStackTrace(); }
                     }
                 }
             }
@@ -161,9 +230,7 @@ public class DiscordListener extends ListenerAdapter {
                 if (help) event.getChannel().sendMessage(DiscordCommands.listofrecordsHelp).queue();
                 else try {
                     event.getChannel().sendMessage(String.format("<@%s>\n%s", id, DiscordCommands.listOfRecords(args))).queue();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                } catch (Exception e) { e.printStackTrace(); }
             }
             /**
              * listofplayers
@@ -176,9 +243,7 @@ public class DiscordListener extends ListenerAdapter {
                 if (help) event.getChannel().sendMessage(DiscordCommands.listofplayersHelp).queue();
                 else try {
                     event.getChannel().sendMessage(String.format("<@%s>\n%s", id, DiscordCommands.listOfPlayers())).queue();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                } catch (Exception e) { e.printStackTrace(); }
             }
             /**
              * getposition
@@ -191,9 +256,7 @@ public class DiscordListener extends ListenerAdapter {
                 if (help) event.getChannel().sendMessage(DiscordCommands.getpositionHelp).queue();
                 else try {
                     event.getChannel().sendMessage(String.format("<@%s>\n%s", id, DiscordCommands.getPosition(args))).queue();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                } catch (Exception e) { e.printStackTrace(); }
             }
             /**
              * estimatepos
@@ -206,9 +269,7 @@ public class DiscordListener extends ListenerAdapter {
                 if (help) event.getChannel().sendMessage(DiscordCommands.estimateposHelp).queue();
                 else try {
                     event.getChannel().sendMessage(String.format("<@%s>\n%s", id, DiscordCommands.estimatePos(args))).queue();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                } catch (Exception e) { e.printStackTrace(); }
             }
             /**
              * commands
@@ -230,9 +291,7 @@ public class DiscordListener extends ListenerAdapter {
                 }
                 try {
                     event.getChannel().sendMessage(Config.readINI().get(3)).queue();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                } catch (IOException e) { e.printStackTrace(); }
             }
         }
     }
